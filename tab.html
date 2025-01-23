@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tab</title>
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+        <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+        <script type="text/javascript">
+            var viz;
+
+            function initViz() {
+                var containerDiv = document.getElementById("vizContainer"),
+                    url = "http://public.tableau.com/views/RegionalSampleWorkbook/Stocks",
+                    options = {
+                        hideTabs: false
+                    };
+                viz = new tableau.Viz(containerDiv, url, options);
+
+                viz.addEventListener(tableau.TableauEventName.TAB_SWITCH, function(event) {
+                    document.getElementById("messages").innerHTML = "You are viewing the " + event.getNewSheetName() + " tab.";
+                });
+
+                document.getElementById("prevTab").addEventListener("click", function() {
+                    var currentTab = viz.getWorkbook().getActiveSheet().getIndex();
+                    if (currentTab > 0) {
+                        viz.getWorkbook().activateSheetAsync(currentTab - 1);
+                    }
+                });
+
+                document.getElementById("nextTab").addEventListener("click", function() {
+                    var currentTab = viz.getWorkbook().getActiveSheet().getIndex();
+                    if (currentTab < viz.getWorkbook().getPublishedSheetsInfo().length - 1) {
+                        viz.getWorkbook().activateSheetAsync(currentTab + 1);
+                    }
+                });
+            }
+        </script>
+        <style>
+            .message-box {
+                background: linear-gradient(135deg, #4caf50, #81c784);
+                color: white;
+                padding: 15px 20px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                display: flex;
+                align-items: center;
+                animation: slideIn 0.4s ease, fadeOut 0.4s ease 5s forwards;
+                opacity: 1;
+                transition: transform 0.3s, opacity 0.3s;
+            }
+        </style>
+    </head>
+    <body onload="initViz()">
+        <div id="vizContainer" style="width:700px; height:500px; overflow:auto;"></div>
+        <div id="controls" style="padding:20px;">
+            <i class="fa fa-arrow-left" aria-hidden="true" id="prevTab"></i> <i class="fa fa-arrow-right" aria-hidden="true" id="nextTab"></i>
+        </div>
+        <div id="messages" class="message-box">
+
+        </div>
+    </body>
+</html>
