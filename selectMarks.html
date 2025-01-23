@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Select Marks</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+
+    <script type="text/javascript"
+        src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+
+    <script type="text/javascript">
+        var viz, sheet;
+
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "http://public.tableau.com/views/RegionalSampleWorkbook/College",
+                options = {
+                    "Academic Year": "",
+                    hideTabs: true,
+                    onFirstInteractive: function () {
+                        sheet = viz.getWorkbook().getActiveSheet();
+                    }
+                };
+
+            viz = new tableau.Viz(containerDiv, url, options);
+        }
+
+        function selectCollege(college_name) {
+            sheet.selectMarksAsync("College", college_name, tableau.SelectionUpdateType.REPLACE);
+        }
+
+        function addCollegeToSelection(college_name) {
+            sheet.selectMarksAsync("College", college_name, tableau.SelectionUpdateType.ADD);
+        }
+
+        function clearCollegeSelection() {
+            sheet.clearSelectedMarksAsync();
+        }
+
+        $(function () {
+            $( "#dialog" ).hide();
+        });
+
+        function showCommentPanel() {
+            $( "#dialog" ).dialog({
+                open: function() {
+                    CKEDITOR.replace( 'editor' );
+                },
+                close: function( event, ui ) {
+                    var editor = CKEDITOR.instances.editor;
+                    if (editor) {
+                        editor.destroy();
+                    }
+                }
+            });
+            $( "#dialog" ).show();
+        }
+    </script>
+    <style>
+        .float-right {
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body onload="initViz();">
+    <div id="dialog" title="Comment Pannel" class="float-right">
+        <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+        <textarea id="editor" rows="10" cols="50">Enter your content here...</textarea>
+    </div>
+	<div id="vizContainer"></div>
+    <br />
+    <button onclick="selectCollege('Engineering');">Select a value</button>
+    <button onclick="addCollegeToSelection('Business');">Add to the selection</button>
+    <button onclick="clearCollegeSelection();">Clear all</button>
+    <button onclick="showCommentPanel();">Comment Test</button>
+</body>
+
+</html>
